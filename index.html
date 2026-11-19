@@ -70,7 +70,8 @@
   .hero::before { width: 360px; height: 360px; right: -110px; top: -120px; }
   .hero::after { width: 220px; height: 220px; right: -40px; top: -40px; border-width: 24px; }
   .kicker { position: relative; color: var(--mint); font-size: 13px; font-weight: 700; letter-spacing: 0.22em; }
-  .hero h1 { position: relative; margin: 10px 0 12px; font-size: clamp(26px, 7vw, 34px); line-height: 1.3; letter-spacing: -0.03em; }
+  .hero h1 { position: relative; margin: 10px 0 12px; font-size: clamp(16px, 4.6vw, 34px); line-height: 1.3; letter-spacing: -0.04em; white-space: nowrap; }
+  .btn.big { flex: 1 1 0; min-width: 0; min-height: 68px; font-size: clamp(17px, 4.6vw, 21px); border-radius: 14px; padding: 0 12px; white-space: nowrap; }
   .hero p { position: relative; margin: 0 0 20px; color: #c6d6df; font-size: 16px; }
   .actions { position: relative; display: flex; flex-wrap: wrap; gap: 10px; }
   .btn {
@@ -100,7 +101,7 @@
   }
   .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 16px; }
   .search input::placeholder { color: var(--dim); }
-  .chips { display: flex; gap: 8px; margin: 14px 0 16px; overflow-x: auto; scrollbar-width: none; }
+  .chips { display: flex; gap: 8px; margin: 28px 0 16px; scroll-margin-top: 90px; overflow-x: auto; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
     flex: none; padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 15px; font-weight: 600;
@@ -188,8 +189,10 @@
     .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .card { min-height: 220px; }
   }
-  @media (max-width: 360px) {
+  @media (max-width: 400px) {
     .pill { display: none; }
+  }
+  @media (max-width: 360px) {
     .card { min-height: 210px; padding: 16px 14px; }
     .card h3 { font-size: 17px; }
   }
@@ -213,12 +216,11 @@
 <main class="wrap" id="home">
   <section class="hero">
     <div class="kicker">현장에서 배우는 스마트 검사 실습</div>
-    <h1>직접 찾아보고,<br>연결하고, 측정하세요.</h1>
+    <h1>직접 찾아보고, 연결하고, 측정하세요.</h1>
     <p>3D 가상 검사실에서 무선설비를 탐색하고 실제 장비 조작 순서를 반복 학습합니다.</p>
     <div class="actions">
-      <button class="btn primary" type="button" data-start="vhf">▶ VHF 검사 시작</button>
-      <button class="btn" type="button" data-start="ais">🛰️ AIS 검사 시작</button>
-      <button class="btn" type="button" data-goto="courses">전체 교육과정 보기</button>
+      <button class="btn big primary" type="button" data-start="vhf">▶ VHF 검사 시작</button>
+      <button class="btn big" type="button" data-start="ais">🛰️ AIS 검사 시작</button>
     </div>
   </section>
 
@@ -228,12 +230,7 @@
     <div class="stat"><b>3분야</b><span>선박·육상·공통</span></div>
   </section>
 
-  <div class="sec-head" id="courses"><h2>검사 실습 선택</h2><span>과정을 터치하세요</span></div>
-  <label class="search">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9fb4c2" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-    <input id="q" type="search" placeholder="설비명 검색 · VHF, AIS, 레이더..." autocomplete="off">
-  </label>
-  <div class="chips" role="tablist">
+  <div class="chips" id="courses" role="tablist">
     <button class="chip on" type="button" data-cat="all">전체</button>
     <button class="chip" type="button" data-cat="ship">🚢 선박국</button>
     <button class="chip" type="button" data-cat="land">📡 육상·방송</button>
@@ -283,19 +280,12 @@
     { id: "rec", cat: "common", ico: "🧰", title: "측정장비 자동 추천", desc: "허가정보 → 보유장비·센서·감쇠기 추천", kw: "측정장비 추천 센서 감쇠기" }
   ];
   var grid = document.getElementById("grid");
-  var q = document.getElementById("q");
   var cat = "all";
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
   function render() {
-    var term = q.value.trim().toLowerCase();
-    var list = COURSES.filter(function (c) {
-      if (cat !== "all" && c.cat !== cat) return false;
-      if (!term) return true;
-      return (c.title + " " + c.desc + " " + c.kw).toLowerCase().indexOf(term) >= 0;
-    });
-    if (!list.length) { grid.innerHTML = '<div class="empty">검색 결과가 없습니다.</div>'; return; }
+    var list = COURSES.filter(function (c) { return cat === "all" || c.cat === cat; });
     grid.innerHTML = list.map(function (c) {
       return '<button type="button" class="card' + (c.live ? ' live' : '') + '" data-course="' + c.id + '">' +
         '<span class="ico" aria-hidden="true">' + c.ico + '</span><span class="chev" aria-hidden="true">›</span>' +
@@ -363,14 +353,13 @@
   function setTab(id) { tabs.forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === id); }); }
 
   document.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-start],[data-goto],[data-course],[data-cat],[data-tab],[data-sheet],#clearHist");
+    var t = e.target.closest("[data-start],[data-course],[data-cat],[data-tab],[data-sheet],#clearHist");
     if (!t) return;
     if (t.id === "clearHist") {
       if (confirm("이 기기에 저장된 학습 기록을 지울까요?")) { try { localStorage.removeItem("rim_history"); } catch (err) {} openSheet(SHEETS.mine()); }
       return;
     }
     if (t.hasAttribute("data-start")) return start(t.getAttribute("data-start"));
-    if (t.hasAttribute("data-goto")) { document.getElementById("courses").scrollIntoView({ behavior: "smooth" }); setTab("courses"); return; }
     if (t.hasAttribute("data-course")) {
       var c = COURSES.filter(function (x) { return x.id === t.getAttribute("data-course"); })[0];
       if (c && c.live) start(c.id); else toast((c ? c.title : "이 과정") + " — 개발 예정 과정입니다.");
@@ -389,7 +378,6 @@
       else openSheet(SHEETS[id]());
     }
   });
-  q.addEventListener("input", render);
 
   document.getElementById("statLive").textContent = COURSES.filter(function (c) { return c.live; }).length + "개";
   document.getElementById("statAll").textContent = COURSES.length + "개";
