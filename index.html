@@ -265,6 +265,24 @@
 <script>
 (function () {
   "use strict";
+  // 새 버전 자동 확인: 휴대폰이 예전 첫 화면을 저장해 두고 보여 주는 문제 방지
+  // (빌드 때 finalize_web.py가 __MENU_VER__ 자리에 버전을 넣고 version.txt를 만듦)
+  var MENU_VER = "1ddd1a6a";
+  function checkVersion() {
+    if (MENU_VER.indexOf("__") === 0 || !window.fetch) return;
+    fetch("version.txt?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (v) {
+        v = (v || "").trim();
+        if (!/^[0-9a-f]{8}$/.test(v) || v === MENU_VER) return;
+        var key = "rim_reload_" + v;
+        try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) {}
+        location.replace(location.pathname + "?v=" + v);
+      })
+      .catch(function () {});
+  }
+  checkVersion();
+  window.addEventListener("pageshow", function (e) { if (e.persisted) checkVersion(); });
   var COURSES = [
     { id: "vhf", cat: "ship", ico: "📻", title: "VHF 무선설비", desc: "선박 VHF-DSC 검사 · RF 결선 · 송신특성", live: true, kw: "vhf dsc 무선전화 송신 출력 주파수 대역폭" },
     { id: "ais", cat: "ship", ico: "🛰️", title: "AIS 자동식별장치", desc: "3D 탐색 · 전후면 대조 · RF 결선 · AIS 1/2 디코딩", live: true, kw: "ais 자동식별 gtb mmsi 불요발사 대역폭 futronic" },
