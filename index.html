@@ -238,11 +238,7 @@
   </div>
   <div class="grid" id="grid"></div>
 
-  <div class="info">
-    <div class="ico">💡</div>
-    <div><b>교육게임에서 현장검사 지원까지</b><span>향후 허가사항을 입력하면 보유 측정기·NRT 센서·SPAN·감쇠기 등을 권고하는 기능을 추가할 예정입니다. 현재는 시안에만 반영되어 있습니다.</span></div>
-  </div>
-  <p class="foot">※ 수치·판정 기준은 교육용 예시이며 실제 고시·기술기준을 대체하지 않습니다. 실습은 실제 전파를 발사하지 않는 시뮬레이터입니다.</p>
+  <p class="foot" style="margin-top:24px">※ 수치·판정 기준은 교육용 예시이며 실제 고시·기술기준을 대체하지 않습니다. 실습은 실제 전파를 발사하지 않는 시뮬레이터입니다.</p>
 </main>
 
 <nav class="tabs" aria-label="하단 메뉴">
@@ -267,7 +263,7 @@
   "use strict";
   // 새 버전 자동 확인: 휴대폰이 예전 첫 화면을 저장해 두고 보여 주는 문제 방지
   // (빌드 때 finalize_web.py가 __MENU_VER__ 자리에 버전을 넣고 version.txt를 만듦)
-  var MENU_VER = "1ddd1a6a";
+  var MENU_VER = "306b3a8b";
   function checkVersion() {
     if (MENU_VER.indexOf("__") === 0 || !window.fetch) return;
     fetch("version.txt?t=" + Date.now(), { cache: "no-store" })
